@@ -51,8 +51,7 @@
     }
 
     .guide-note,
-    .sources,
-    .conversion {
+    .sources {
       background: var(--panel);
       border: 1px solid var(--line);
       border-radius: 8px;
@@ -61,8 +60,7 @@
     }
 
     .guide-note h2,
-    .sources h2,
-    .conversion h2 {
+    .sources h2 {
       margin: 0 0 8px;
       font-size: 1.1rem;
     }
@@ -139,14 +137,12 @@
       font-weight: 700;
     }
 
-    .sources ul,
-    .conversion ol {
+    .sources ul {
       margin: 8px 0 0;
       padding-left: 20px;
     }
 
-    .sources li,
-    .conversion li {
+    .sources li {
       margin: 6px 0;
     }
 
@@ -188,46 +184,66 @@
 
     .route-map {
       position: relative;
-      min-height: 420px;
-      padding: 18px;
-      background:
-        radial-gradient(circle at 84% 18%, rgba(38, 95, 70, 0.12), transparent 28%),
-        linear-gradient(145deg, #fffaf0, #efe4cd);
+      overflow: hidden;
+      background: #eaf5f8;
     }
 
-    .route-line {
-      position: absolute;
-      inset: 40px 50% 50px auto;
-      width: 3px;
-      translate: 1px 0;
-      background: linear-gradient(var(--accent), var(--accent-2));
-      opacity: 0.45;
+    .route-map-image {
+      display: block;
+      width: 100%;
+      height: auto;
     }
 
     .map-stop {
       position: absolute;
       left: var(--x);
       top: var(--y);
-      width: 40px;
-      height: 40px;
+      width: 34px;
+      height: 34px;
       border-radius: 50%;
       padding: 0;
       border: 2px solid #fffaf0;
       box-shadow: 0 2px 8px rgba(32, 32, 24, 0.25);
+      translate: -50% -50%;
+      font-size: 0.88rem;
     }
 
     .map-stop.active {
       background: var(--accent-2);
-      transform: scale(1.08);
+      transform: scale(1.16);
+      z-index: 3;
     }
 
     .map-label {
       position: absolute;
-      left: calc(var(--x) + 46px);
-      top: calc(var(--y) + 6px);
-      max-width: 170px;
-      font-size: 0.82rem;
+      left: var(--x);
+      top: calc(var(--y) + 22px);
+      translate: -50% 0;
+      max-width: 140px;
+      padding: 4px 7px;
+      border-radius: 999px;
+      background: rgba(255, 250, 240, 0.95);
+      color: var(--ink);
+      font-size: 0.74rem;
+      font-weight: 800;
+      text-align: center;
+      box-shadow: 0 1px 5px rgba(32, 32, 24, 0.18);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.15s ease;
+      z-index: 2;
+    }
+
+    .map-label.active {
+      opacity: 1;
+    }
+
+    .map-note {
+      padding: 9px 12px 11px;
+      border-top: 1px solid var(--line);
       color: var(--muted);
+      font-size: 0.84rem;
+      background: #fffaf0;
     }
 
     .stop-list {
@@ -350,7 +366,7 @@
     <div class="app-shell">
       <section class="guide-note">
         <h2>Use It Like A Field App</h2>
-        <p>Pick your stop from the route menu, tap <strong>Speak Track</strong>, then use the reference links when you want images or deeper background. The route map is conceptual, not a navigation map.</p>
+        <p>Pick your stop from the route menu, tap <strong>Play Track</strong>, then use the reference links when you want images or deeper background.</p>
         <div class="controls">
           <button id="stopAll" class="secondary">Stop Speaking</button>
           <button id="pause" class="secondary">Pause</button>
@@ -366,8 +382,9 @@
               <span class="progress" id="routeProgress">Stop 1 of 12</span>
             </div>
             <div class="route-map" id="routeMap">
-              <div class="route-line"></div>
+              <img class="route-map-image" alt="Cropped Queensland Parks map showing the Forts Walk area of Magnetic Island" src="forts-map.jpg">
             </div>
+            <div class="map-note">Approximate audio stops overlaid on the Queensland Parks map crop. Use the official track signs for navigation.</div>
           </section>
 
           <section class="panel" style="margin-top: 12px;">
@@ -385,16 +402,6 @@
           </div>
           <article class="location-view" id="locationView"></article>
         </section>
-      </section>
-
-      <section class="conversion">
-        <h2>Make Real MP3s Later</h2>
-        <ol>
-          <li>Use <strong>Copy Script</strong> on each location view.</li>
-          <li>Paste into a free TTS service such as TTSMP3, Narakeet's free trial, ElevenLabs free tier, or any phone/computer app that exports spoken audio.</li>
-          <li>Download each file as <code>track-01.mp3</code>, <code>track-02.mp3</code>, and so on.</li>
-          <li>Put the files beside this <code>index.html</code>. Reopen the page and use the audio player in each location view.</li>
-        </ol>
       </section>
     </div>
   </main>
@@ -555,7 +562,7 @@
     const stopMeta = [
       {
         short: "Trailhead",
-        map: ["46%", "86%"],
+        map: ["52%", "41%"],
         tags: ["orientation", "WWII context"],
         images: [
           ["Forts Walk photos", "https://commons.wikimedia.org/wiki/Category:Fort_Complex,_Magnetic_Island"],
@@ -568,7 +575,7 @@
       },
       {
         short: "Koala Woodland",
-        map: ["39%", "78%"],
+        map: ["50%", "37%"],
         tags: ["nature", "koalas", "eucalypt woodland"],
         images: [
           ["Koala reference images", "https://commons.wikimedia.org/wiki/Category:Koalas_on_Magnetic_Island"],
@@ -581,7 +588,7 @@
       },
       {
         short: "Granite Country",
-        map: ["52%", "70%"],
+        map: ["48%", "32%"],
         tags: ["geology", "granite tors"],
         images: [
           ["Magnetic Island boulders", "https://commons.wikimedia.org/wiki/Category:Magnetic_Island"],
@@ -594,7 +601,7 @@
       },
       {
         short: "First Views",
-        map: ["43%", "62%"],
+        map: ["49%", "27%"],
         tags: ["Cleveland Bay", "strategy"],
         images: [
           ["Cleveland Bay map", "https://www.openstreetmap.org/#map=12/-19.1481/146.8711"],
@@ -607,7 +614,7 @@
       },
       {
         short: "Access Route",
-        map: ["55%", "55%"],
+        map: ["52%", "23%"],
         tags: ["logistics", "construction"],
         images: [
           ["Fort Complex images", "https://commons.wikimedia.org/wiki/Category:Fort_Complex,_Magnetic_Island"],
@@ -620,7 +627,7 @@
       },
       {
         short: "Gun Emplacements",
-        map: ["44%", "46%"],
+        map: ["56%", "19%"],
         tags: ["artillery", "155 mm guns", "Panama mounts"],
         images: [
           ["Gun emplacement photos", "https://commons.wikimedia.org/wiki/Category:Fort_Complex,_Magnetic_Island"],
@@ -633,7 +640,7 @@
       },
       {
         short: "Magazines",
-        map: ["55%", "38%"],
+        map: ["61%", "17%"],
         tags: ["ammunition", "battery system"],
         images: [
           ["Fort Complex images", "https://commons.wikimedia.org/wiki/Category:Fort_Complex,_Magnetic_Island"],
@@ -646,7 +653,7 @@
       },
       {
         short: "Command Post",
-        map: ["44%", "30%"],
+        map: ["65%", "15%"],
         tags: ["observation", "command"],
         images: [
           ["Observation post photos", "https://commons.wikimedia.org/wiki/Category:Fort_Complex,_Magnetic_Island"],
@@ -659,7 +666,7 @@
       },
       {
         short: "Signals",
-        map: ["55%", "22%"],
+        map: ["77%", "32%"],
         tags: ["radar", "searchlights", "signals"],
         images: [
           ["Fort Complex image set", "https://commons.wikimedia.org/wiki/Category:Fort_Complex,_Magnetic_Island"],
@@ -672,7 +679,7 @@
       },
       {
         short: "Top Ecology",
-        map: ["45%", "14%"],
+        map: ["59%", "14%"],
         tags: ["nature", "habitats", "reef"],
         images: [
           ["Magnetic Island landscapes", "https://commons.wikimedia.org/wiki/Category:Magnetic_Island"],
@@ -685,7 +692,7 @@
       },
       {
         short: "Heritage",
-        map: ["57%", "8%"],
+        map: ["63%", "12%"],
         tags: ["heritage", "post-war"],
         images: [
           ["Fort heritage photos", "https://commons.wikimedia.org/wiki/Category:Fort_Complex,_Magnetic_Island"],
@@ -698,7 +705,7 @@
       },
       {
         short: "Descent",
-        map: ["47%", "2%"],
+        map: ["52%", "41%"],
         tags: ["wrap-up", "reflection"],
         images: [
           ["Forts Walk images", "https://commons.wikimedia.org/wiki/Category:Fort_Complex,_Magnetic_Island"],
@@ -720,6 +727,7 @@
     const resumeButton = document.getElementById("resume");
     const nextStop = document.getElementById("nextStop");
     let currentUtterance = null;
+    let currentAudio = null;
     let activeIndex = 0;
 
     function renderNavigation() {
@@ -758,6 +766,9 @@
       document.querySelectorAll(".map-stop").forEach((button, buttonIndex) => {
         button.classList.toggle("active", buttonIndex === index);
       });
+      document.querySelectorAll(".map-label").forEach((label, labelIndex) => {
+        label.classList.toggle("active", labelIndex === index);
+      });
       document.querySelectorAll(".stop-button").forEach((button, buttonIndex) => {
         button.classList.toggle("active", buttonIndex === index);
       });
@@ -776,10 +787,9 @@
         <div class="meta"><span class="stop">${track.location}</span> · ${track.time}</div>
         <div class="tag-row">${tags}</div>
         <div class="controls">
-          <button id="speakActive">Speak Track</button>
-          <button id="copyActive" class="secondary">Copy Script</button>
+          <button id="playActive">Play Track</button>
         </div>
-        <audio controls preload="none" src="${track.file}"></audio>
+        <audio id="activeAudio" controls preload="none" src="${track.file}"></audio>
         <h2>Reference Images</h2>
         <div class="image-grid">${images}</div>
         <h2>Source Links</h2>
@@ -789,17 +799,27 @@
 
       const audio = locationView.querySelector("audio");
       audio.addEventListener("error", () => audio.remove(), { once: true });
-      document.getElementById("speakActive").addEventListener("click", () => speakTrack(track));
-      document.getElementById("copyActive").addEventListener("click", async event => {
-        await navigator.clipboard.writeText(track.text.join("\n\n"));
-        event.currentTarget.textContent = "Copied";
-        setTimeout(() => event.currentTarget.textContent = "Copy Script", 1200);
-      });
+      document.getElementById("playActive").addEventListener("click", () => playTrack(track));
+    }
+
+    function playTrack(track) {
+      window.speechSynthesis && window.speechSynthesis.cancel();
+      const audio = document.getElementById("activeAudio");
+      if (!audio) {
+        speakTrack(track);
+        return;
+      }
+      if (currentAudio && currentAudio !== audio) {
+        currentAudio.pause();
+      }
+      currentAudio = audio;
+      audio.currentTime = 0;
+      audio.play().catch(() => speakTrack(track));
     }
 
     function speakTrack(track) {
       if (!("speechSynthesis" in window)) {
-        alert("This browser does not support speech synthesis. Use Copy Script and paste it into a TTS app.");
+        alert("This browser cannot play this track and does not support speech synthesis fallback.");
         return;
       }
       window.speechSynthesis.cancel();
@@ -810,10 +830,34 @@
       window.speechSynthesis.speak(utterance);
     }
 
-    stopAll.addEventListener("click", () => window.speechSynthesis && window.speechSynthesis.cancel());
-    pauseButton.addEventListener("click", () => window.speechSynthesis && window.speechSynthesis.pause());
-    resumeButton.addEventListener("click", () => window.speechSynthesis && window.speechSynthesis.resume());
-    nextStop.addEventListener("click", () => selectStop((activeIndex + 1) % tracks.length));
+    function stopPlayback() {
+      window.speechSynthesis && window.speechSynthesis.cancel();
+      if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+      }
+    }
+
+    function pausePlayback() {
+      window.speechSynthesis && window.speechSynthesis.pause();
+      if (currentAudio) currentAudio.pause();
+    }
+
+    function resumePlayback() {
+      if (currentAudio && currentAudio.paused) {
+        currentAudio.play().catch(() => {});
+      } else if (window.speechSynthesis) {
+        window.speechSynthesis.resume();
+      }
+    }
+
+    stopAll.addEventListener("click", stopPlayback);
+    pauseButton.addEventListener("click", pausePlayback);
+    resumeButton.addEventListener("click", resumePlayback);
+    nextStop.addEventListener("click", () => {
+      stopPlayback();
+      selectStop((activeIndex + 1) % tracks.length);
+    });
 
     renderNavigation();
     selectStop(0);
