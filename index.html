@@ -155,12 +155,187 @@
       margin-top: 10px;
     }
 
+    .app-shell {
+      display: grid;
+      gap: 14px;
+    }
+
+    .field-layout {
+      display: grid;
+      gap: 14px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .panel-header h2 {
+      margin: 0;
+      font-size: 1.05rem;
+    }
+
+    .route-map {
+      position: relative;
+      min-height: 420px;
+      padding: 18px;
+      background:
+        radial-gradient(circle at 84% 18%, rgba(38, 95, 70, 0.12), transparent 28%),
+        linear-gradient(145deg, #fffaf0, #efe4cd);
+    }
+
+    .route-line {
+      position: absolute;
+      inset: 40px 50% 50px auto;
+      width: 3px;
+      translate: 1px 0;
+      background: linear-gradient(var(--accent), var(--accent-2));
+      opacity: 0.45;
+    }
+
+    .map-stop {
+      position: absolute;
+      left: var(--x);
+      top: var(--y);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      padding: 0;
+      border: 2px solid #fffaf0;
+      box-shadow: 0 2px 8px rgba(32, 32, 24, 0.25);
+    }
+
+    .map-stop.active {
+      background: var(--accent-2);
+      transform: scale(1.08);
+    }
+
+    .map-label {
+      position: absolute;
+      left: calc(var(--x) + 46px);
+      top: calc(var(--y) + 6px);
+      max-width: 170px;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    .stop-list {
+      display: grid;
+      gap: 8px;
+      padding: 12px;
+      max-height: 360px;
+      overflow: auto;
+    }
+
+    .stop-button {
+      width: 100%;
+      text-align: left;
+      background: #fffaf0;
+      color: var(--ink);
+      border-color: var(--line);
+      font-weight: 600;
+    }
+
+    .stop-button.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: white;
+    }
+
+    .location-view {
+      padding: 14px;
+    }
+
+    .location-title {
+      margin: 0 0 6px;
+      font-size: 1.35rem;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 10px 0 2px;
+    }
+
+    .tag {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 4px 8px;
+      background: #f7ecd7;
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .image-grid,
+    .reference-grid {
+      display: grid;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .reference-card {
+      display: block;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      color: var(--ink);
+      text-decoration: none;
+      background: #fffdf7;
+    }
+
+    .reference-card span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.84rem;
+      margin-top: 2px;
+    }
+
+    .progress {
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .script-body {
+      margin-top: 12px;
+      border-top: 1px solid var(--line);
+      padding-top: 4px;
+    }
+
     @media (min-width: 720px) {
       header {
         padding: 28px 24px 18px;
       }
       main {
         padding: 20px 24px 36px;
+      }
+
+      .field-layout {
+        grid-template-columns: minmax(280px, 0.9fr) minmax(0, 1.4fr);
+        align-items: start;
+      }
+
+      .map-and-menu {
+        position: sticky;
+        top: 12px;
+      }
+
+      .image-grid,
+      .reference-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
     }
   </style>
@@ -172,40 +347,56 @@
   </header>
 
   <main>
-    <section class="guide-note">
-      <h2>How to Use This</h2>
-      <p>Open each stop as you reach it and tap <strong>Speak Track</strong>. On iPhone, Safari should use the built-in system voice. If you later add MP3s named <code>track-01.mp3</code> through <code>track-12.mp3</code> in this same folder, the audio players will use those instead.</p>
-      <div class="controls">
-        <button id="stopAll" class="secondary">Stop Speaking</button>
-        <button id="pause" class="secondary">Pause</button>
-        <button id="resume" class="secondary">Resume</button>
-      </div>
-    </section>
+    <div class="app-shell">
+      <section class="guide-note">
+        <h2>Use It Like A Field App</h2>
+        <p>Pick your stop from the route menu, tap <strong>Speak Track</strong>, then use the reference links when you want images or deeper background. The route map is conceptual, not a navigation map.</p>
+        <div class="controls">
+          <button id="stopAll" class="secondary">Stop Speaking</button>
+          <button id="pause" class="secondary">Pause</button>
+          <button id="resume" class="secondary">Resume</button>
+        </div>
+      </section>
 
-    <section id="tracks"></section>
+      <section class="field-layout">
+        <aside class="map-and-menu">
+          <section class="panel">
+            <div class="panel-header">
+              <h2>Reference Route</h2>
+              <span class="progress" id="routeProgress">Stop 1 of 12</span>
+            </div>
+            <div class="route-map" id="routeMap">
+              <div class="route-line"></div>
+            </div>
+          </section>
 
-    <section class="conversion">
-      <h2>Make Real MP3s Later</h2>
-      <ol>
-        <li>Open this page on a computer or phone and copy one track's script text.</li>
-        <li>Paste it into a free TTS service such as TTSMP3, Narakeet's free trial, ElevenLabs free tier, or any phone/computer app that exports spoken audio.</li>
-        <li>Download each file as <code>track-01.mp3</code>, <code>track-02.mp3</code>, and so on.</li>
-        <li>Put the files beside this <code>index.html</code>. Reopen the page and use the audio players instead of the browser voice.</li>
-      </ol>
-    </section>
+          <section class="panel" style="margin-top: 12px;">
+            <div class="panel-header">
+              <h2>Select Stop</h2>
+            </div>
+            <div class="stop-list" id="stopList"></div>
+          </section>
+        </aside>
 
-    <section class="sources">
-      <h2>Open References</h2>
-      <ul>
-        <li><a href="https://parks.qld.gov.au/parks/magnetic-island/journeys/forts-walk">Queensland Parks: Forts Walk</a></li>
-        <li><a href="https://parks.des.qld.gov.au/__data/assets/pdf_file/0028/167437/magnetic-island.pdf">Magnetic Island National Park Management Statement 2023</a></li>
-        <li><a href="https://www.magneticislandguide.com.au/history">Magnetic Island Guide: History and Heritage</a></li>
-        <li><a href="https://www.magneticislandtours.net.au/tours/forts-walking-tour-magnetic-island/">Magnetic Island Tours: Forts Walking Tour</a></li>
-        <li><a href="https://commons.wikimedia.org/wiki/Category:Fort_Complex,_Magnetic_Island">Wikimedia Commons: Fort Complex, Magnetic Island images</a></li>
-        <li><a href="https://www.sealink.com.au/magnetic-island/things-to-do/wildlife-on-magnetic-island/">SeaLink: Wildlife on Magnetic Island</a></li>
-        <li><a href="https://www.whatsonmagneticisland.com.au/flora-and-fauna">What's On Magnetic Island: Parks and Wildlife</a></li>
-      </ul>
-    </section>
+        <section class="panel">
+          <div class="panel-header">
+            <h2>Location View</h2>
+            <button id="nextStop" class="secondary">Next Stop</button>
+          </div>
+          <article class="location-view" id="locationView"></article>
+        </section>
+      </section>
+
+      <section class="conversion">
+        <h2>Make Real MP3s Later</h2>
+        <ol>
+          <li>Use <strong>Copy Script</strong> on each location view.</li>
+          <li>Paste into a free TTS service such as TTSMP3, Narakeet's free trial, ElevenLabs free tier, or any phone/computer app that exports spoken audio.</li>
+          <li>Download each file as <code>track-01.mp3</code>, <code>track-02.mp3</code>, and so on.</li>
+          <li>Put the files beside this <code>index.html</code>. Reopen the page and use the audio player in each location view.</li>
+        </ol>
+      </section>
+    </div>
   </main>
 
   <script>
@@ -361,58 +552,248 @@
       }
     ];
 
-    const trackRoot = document.getElementById("tracks");
+    const stopMeta = [
+      {
+        short: "Trailhead",
+        map: ["46%", "86%"],
+        tags: ["orientation", "WWII context"],
+        images: [
+          ["Forts Walk photos", "https://commons.wikimedia.org/wiki/Category:Fort_Complex,_Magnetic_Island"],
+          ["Forts Junction map reference", "https://parks.qld.gov.au/parks/magnetic-island/journeys/forts-walk"]
+        ],
+        refs: [
+          ["Queensland Parks Forts Walk", "Official walk overview and access details.", "https://parks.qld.gov.au/parks/magnetic-island/journeys/forts-walk"],
+          ["Magnetic Island history", "Broad local history and island context.", "https://www.magneticislandguide.com.au/history"]
+        ]
+      },
+      {
+        short: "Koala Woodland",
+        map: ["39%", "78%"],
+        tags: ["nature", "koalas", "eucalypt woodland"],
+        images: [
+          ["Koala reference images", "https://commons.wikimedia.org/wiki/Category:Koalas_on_Magnetic_Island"],
+          ["Wildlife guide", "https://www.sealink.com.au/magnetic-island/things-to-do/wildlife-on-magnetic-island/"]
+        ],
+        refs: [
+          ["SeaLink wildlife guide", "Koalas, rock-wallabies, curlews, lorikeets, and echidnas.", "https://www.sealink.com.au/magnetic-island/things-to-do/wildlife-on-magnetic-island/"],
+          ["Parks and wildlife overview", "Island habitats and common fauna.", "https://www.whatsonmagneticisland.com.au/flora-and-fauna"]
+        ]
+      },
+      {
+        short: "Granite Country",
+        map: ["52%", "70%"],
+        tags: ["geology", "granite tors"],
+        images: [
+          ["Magnetic Island boulders", "https://commons.wikimedia.org/wiki/Category:Magnetic_Island"],
+          ["Island formation notes", "https://www.magneticislandguide.com.au/history"]
+        ],
+        refs: [
+          ["Magnetic Island Guide", "Granite formation and sea-level history.", "https://www.magneticislandguide.com.au/history"],
+          ["National park management statement", "Landscape, heritage, and management values.", "https://parks.des.qld.gov.au/__data/assets/pdf_file/0028/167437/magnetic-island.pdf"]
+        ]
+      },
+      {
+        short: "First Views",
+        map: ["43%", "62%"],
+        tags: ["Cleveland Bay", "strategy"],
+        images: [
+          ["Cleveland Bay map", "https://www.openstreetmap.org/#map=12/-19.1481/146.8711"],
+          ["Forts view photos", "https://commons.wikimedia.org/wiki/Category:Fort_Complex,_Magnetic_Island"]
+        ],
+        refs: [
+          ["Townsville wartime context", "National park management notes on the fort's significance.", "https://parks.des.qld.gov.au/__data/assets/pdf_file/0028/167437/magnetic-island.pdf"],
+          ["Magnetic Battery overview", "Open summary of the battery and harbour defence role.", "https://en.wikipedia.org/wiki/Magnetic_Battery"]
+        ]
+      },
+      {
+        short: "Access Route",
+        map: ["55%", "55%"],
+        tags: ["logistics", "construction"],
+        images: [
+          ["Fort Complex images", "https://commons.wikimedia.org/wiki/Category:Fort_Complex,_Magnetic_Island"],
+          ["Walking track reference", "https://www.magneticislandguide.com.au/walking-trails"]
+        ],
+        refs: [
+          ["Queensland Parks Forts Walk", "Official route and heritage summary.", "https://parks.qld.gov.au/parks/magnetic-island/journeys/forts-walk"],
+          ["Forts walking tour notes", "Local guide's overview of what the track includes.", "https://www.magneticislandtours.net.au/tours/forts-walking-tour-magnetic-island/"]
+        ]
+      },
+      {
+        short: "Gun Emplacements",
+        map: ["44%", "46%"],
+        tags: ["artillery", "155 mm guns", "Panama mounts"],
+        images: [
+          ["Gun emplacement photos", "https://commons.wikimedia.org/wiki/Category:Fort_Complex,_Magnetic_Island"],
+          ["155 mm gun Townsville photo", "https://stories.townsville.qld.gov.au/nodes/view/15381"]
+        ],
+        refs: [
+          ["Magnetic Battery", "Open summary mentioning 155 mm guns and battery operation.", "https://en.wikipedia.org/wiki/Magnetic_Battery"],
+          ["Townsville heritage photo", "Historic 155 mm gun loading image.", "https://stories.townsville.qld.gov.au/nodes/view/15381"]
+        ]
+      },
+      {
+        short: "Magazines",
+        map: ["55%", "38%"],
+        tags: ["ammunition", "battery system"],
+        images: [
+          ["Fort Complex images", "https://commons.wikimedia.org/wiki/Category:Fort_Complex,_Magnetic_Island"],
+          ["Queensland heritage reference", "https://parks.des.qld.gov.au/__data/assets/pdf_file/0028/167437/magnetic-island.pdf"]
+        ],
+        refs: [
+          ["Management statement", "Notes the fort complex and protected heritage values.", "https://parks.des.qld.gov.au/__data/assets/pdf_file/0028/167437/magnetic-island.pdf"],
+          ["Fort Complex summary", "Lists magazines, gun emplacements, command, searchlight, radar, and signal components.", "https://en.wikipedia.org/wiki/Fort_Complex,_Magnetic_Island"]
+        ]
+      },
+      {
+        short: "Command Post",
+        map: ["44%", "30%"],
+        tags: ["observation", "command"],
+        images: [
+          ["Observation post photos", "https://commons.wikimedia.org/wiki/Category:Fort_Complex,_Magnetic_Island"],
+          ["Forts walking tour images", "https://www.magneticislandtours.net.au/tours/forts-walking-tour-magnetic-island/"]
+        ],
+        refs: [
+          ["Fort Complex images", "Open reference images for the observation and command structures.", "https://commons.wikimedia.org/wiki/Category:Fort_Complex,_Magnetic_Island"],
+          ["Queensland Parks Forts Walk", "Official heritage walk overview.", "https://parks.qld.gov.au/parks/magnetic-island/journeys/forts-walk"]
+        ]
+      },
+      {
+        short: "Signals",
+        map: ["55%", "22%"],
+        tags: ["radar", "searchlights", "signals"],
+        images: [
+          ["Fort Complex image set", "https://commons.wikimedia.org/wiki/Category:Fort_Complex,_Magnetic_Island"],
+          ["Magnetic Island history", "https://www.magneticislandguide.com.au/history"]
+        ],
+        refs: [
+          ["Magnetic Island history", "Local notes on searchlights, radar, and WWII facilities.", "https://www.magneticislandguide.com.au/history"],
+          ["Magnetic Battery", "Open summary of searchlights, radar, command, and observation posts.", "https://en.wikipedia.org/wiki/Magnetic_Battery"]
+        ]
+      },
+      {
+        short: "Top Ecology",
+        map: ["45%", "14%"],
+        tags: ["nature", "habitats", "reef"],
+        images: [
+          ["Magnetic Island landscapes", "https://commons.wikimedia.org/wiki/Category:Magnetic_Island"],
+          ["Parks and wildlife", "https://www.whatsonmagneticisland.com.au/flora-and-fauna"]
+        ],
+        refs: [
+          ["Parks and wildlife overview", "Dry woodland, hoop pine, rainforest pockets, reefs, birds, and wallabies.", "https://www.whatsonmagneticisland.com.au/flora-and-fauna"],
+          ["Magnetic Island wildlife", "Visitor-friendly wildlife overview.", "https://www.sealink.com.au/magnetic-island/things-to-do/wildlife-on-magnetic-island/"]
+        ]
+      },
+      {
+        short: "Heritage",
+        map: ["57%", "8%"],
+        tags: ["heritage", "post-war"],
+        images: [
+          ["Fort heritage photos", "https://commons.wikimedia.org/wiki/Category:Fort_Complex,_Magnetic_Island"],
+          ["Management statement PDF", "https://parks.des.qld.gov.au/__data/assets/pdf_file/0028/167437/magnetic-island.pdf"]
+        ],
+        refs: [
+          ["National park management statement", "Queensland Heritage Register place reference and significance.", "https://parks.des.qld.gov.au/__data/assets/pdf_file/0028/167437/magnetic-island.pdf"],
+          ["Fort Complex summary", "Open summary of heritage listing and significant components.", "https://en.wikipedia.org/wiki/Fort_Complex,_Magnetic_Island"]
+        ]
+      },
+      {
+        short: "Descent",
+        map: ["47%", "2%"],
+        tags: ["wrap-up", "reflection"],
+        images: [
+          ["Forts Walk images", "https://commons.wikimedia.org/wiki/Category:Fort_Complex,_Magnetic_Island"],
+          ["Official trail page", "https://parks.qld.gov.au/parks/magnetic-island/journeys/forts-walk"]
+        ],
+        refs: [
+          ["Queensland Parks Forts Walk", "Recheck access, closures, and official park guidance.", "https://parks.qld.gov.au/parks/magnetic-island/journeys/forts-walk"],
+          ["Magnetic Island walking trails", "Other walks and island trail context.", "https://www.magneticislandguide.com.au/walking-trails"]
+        ]
+      }
+    ];
+
+    const routeMap = document.getElementById("routeMap");
+    const stopList = document.getElementById("stopList");
+    const locationView = document.getElementById("locationView");
+    const routeProgress = document.getElementById("routeProgress");
     const stopAll = document.getElementById("stopAll");
     const pauseButton = document.getElementById("pause");
     const resumeButton = document.getElementById("resume");
+    const nextStop = document.getElementById("nextStop");
     let currentUtterance = null;
+    let activeIndex = 0;
 
-    function renderTracks() {
+    function renderNavigation() {
       tracks.forEach((track, index) => {
-        const details = document.createElement("details");
-        details.className = "track";
-        if (index === 0) details.open = true;
+        const meta = stopMeta[index];
+        const mapButton = document.createElement("button");
+        mapButton.className = "map-stop";
+        mapButton.style.setProperty("--x", meta.map[0]);
+        mapButton.style.setProperty("--y", meta.map[1]);
+        mapButton.textContent = String(index + 1);
+        mapButton.setAttribute("aria-label", `Open ${track.title}`);
+        mapButton.addEventListener("click", () => selectStop(index));
+        routeMap.append(mapButton);
 
-        const summary = document.createElement("summary");
-        summary.innerHTML = `<h2>${track.title}</h2><div class="meta"><span class="stop">${track.location}</span> · ${track.time}</div>`;
+        const label = document.createElement("div");
+        label.className = "map-label";
+        label.style.setProperty("--x", meta.map[0]);
+        label.style.setProperty("--y", meta.map[1]);
+        label.textContent = meta.short;
+        routeMap.append(label);
 
-        const script = document.createElement("div");
-        script.className = "script";
+        const listButton = document.createElement("button");
+        listButton.className = "stop-button";
+        listButton.innerHTML = `${track.title}<br><span class="meta">${track.location}</span>`;
+        listButton.addEventListener("click", () => selectStop(index));
+        stopList.append(listButton);
+      });
+    }
 
-        const controls = document.createElement("div");
-        controls.className = "controls";
+    function selectStop(index) {
+      activeIndex = index;
+      const track = tracks[index];
+      const meta = stopMeta[index];
+      routeProgress.textContent = `Stop ${index + 1} of ${tracks.length}`;
 
-        const speak = document.createElement("button");
-        speak.textContent = "Speak Track";
-        speak.addEventListener("click", () => speakTrack(track));
+      document.querySelectorAll(".map-stop").forEach((button, buttonIndex) => {
+        button.classList.toggle("active", buttonIndex === index);
+      });
+      document.querySelectorAll(".stop-button").forEach((button, buttonIndex) => {
+        button.classList.toggle("active", buttonIndex === index);
+      });
 
-        const copy = document.createElement("button");
-        copy.className = "secondary";
-        copy.textContent = "Copy Script";
-        copy.addEventListener("click", async () => {
-          await navigator.clipboard.writeText(track.text.join("\n\n"));
-          copy.textContent = "Copied";
-          setTimeout(() => copy.textContent = "Copy Script", 1200);
-        });
+      const tags = meta.tags.map(tag => `<span class="tag">${tag}</span>`).join("");
+      const refs = meta.refs.map(([title, description, url]) => (
+        `<a class="reference-card" href="${url}" target="_blank" rel="noreferrer">${title}<span>${description}</span></a>`
+      )).join("");
+      const images = meta.images.map(([title, url]) => (
+        `<a class="reference-card" href="${url}" target="_blank" rel="noreferrer">${title}<span>Open reference images or map in a new tab.</span></a>`
+      )).join("");
+      const paragraphs = track.text.map(paragraph => `<p>${paragraph}</p>`).join("");
 
-        controls.append(speak, copy);
-        script.append(controls);
+      locationView.innerHTML = `
+        <h1 class="location-title">${track.title}</h1>
+        <div class="meta"><span class="stop">${track.location}</span> · ${track.time}</div>
+        <div class="tag-row">${tags}</div>
+        <div class="controls">
+          <button id="speakActive">Speak Track</button>
+          <button id="copyActive" class="secondary">Copy Script</button>
+        </div>
+        <audio controls preload="none" src="${track.file}"></audio>
+        <h2>Reference Images</h2>
+        <div class="image-grid">${images}</div>
+        <h2>Source Links</h2>
+        <div class="reference-grid">${refs}</div>
+        <div class="script-body">${paragraphs}</div>
+      `;
 
-        const audio = document.createElement("audio");
-        audio.controls = true;
-        audio.preload = "none";
-        audio.src = track.file;
-        audio.addEventListener("error", () => audio.remove(), { once: true });
-        script.append(audio);
-
-        track.text.forEach(paragraph => {
-          const p = document.createElement("p");
-          p.textContent = paragraph;
-          script.append(p);
-        });
-
-        details.append(summary, script);
-        trackRoot.append(details);
+      const audio = locationView.querySelector("audio");
+      audio.addEventListener("error", () => audio.remove(), { once: true });
+      document.getElementById("speakActive").addEventListener("click", () => speakTrack(track));
+      document.getElementById("copyActive").addEventListener("click", async event => {
+        await navigator.clipboard.writeText(track.text.join("\n\n"));
+        event.currentTarget.textContent = "Copied";
+        setTimeout(() => event.currentTarget.textContent = "Copy Script", 1200);
       });
     }
 
@@ -432,8 +813,10 @@
     stopAll.addEventListener("click", () => window.speechSynthesis && window.speechSynthesis.cancel());
     pauseButton.addEventListener("click", () => window.speechSynthesis && window.speechSynthesis.pause());
     resumeButton.addEventListener("click", () => window.speechSynthesis && window.speechSynthesis.resume());
+    nextStop.addEventListener("click", () => selectStop((activeIndex + 1) % tracks.length));
 
-    renderTracks();
+    renderNavigation();
+    selectStop(0);
   </script>
 </body>
 </html>
